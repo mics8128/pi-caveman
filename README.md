@@ -20,19 +20,19 @@ Compared with upstream caveman:
 
 - Packaged as a pi extension under `~/.pi/agent/extensions/pi-caveman/`
 - Fixed mode to **full** only
+- Always enabled; no on/off command
 - Injects full Caveman rules once per pi session
 - Injects original short reminder each prompt
+- Removes mode-switching prompt text not needed for fixed full mode
 - Removes Claude Code-specific statusline setup and flag-file logic
 - Removes footer/status badge in pi UI
-- Adds `/pi-caveman` command for on/off/status
 - Adds `/caveman-compress <filepath>` command
 - Supports `/caveman:compress <filepath>` alias
-- Keeps old local aliases `/caveman-session` and `/caveman-smart`
 - Stores project as standalone git repo for version management
 
 ## Behavior
 
-Default: enabled.
+Always enabled.
 
 First prompt in each session injects full Caveman full-mode rules:
 
@@ -49,21 +49,6 @@ CAVEMAN MODE ACTIVE (full). Drop articles/filler/pleasantries/hedging. Fragments
 No visible status badge is shown.
 
 ## Commands
-
-```txt
-/pi-caveman on
-/pi-caveman off
-/pi-caveman status
-```
-
-Compatibility aliases:
-
-```txt
-/caveman-session on|off|status
-/caveman-smart on|off|status
-```
-
-Compression:
 
 ```txt
 /caveman-compress <filepath>

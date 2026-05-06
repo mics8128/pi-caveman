@@ -11,9 +11,7 @@ const CAVEMAN_FULL_PROMPT = [
 	"",
 	"## Persistence",
 	"",
-	"ACTIVE EVERY RESPONSE. No revert after many turns. No filler drift. Still active if unsure. Off only: \"stop caveman\" / \"normal mode\".",
-	"",
-	"Default: **full**. Switch: `/caveman lite|full|ultra`.",
+	"ACTIVE EVERY RESPONSE. No revert after many turns. No filler drift. Still active if unsure.",
 	"",
 	"## Rules",
 	"",
@@ -56,7 +54,7 @@ const CAVEMAN_FULL_PROMPT = [
 	"",
 	"## Boundaries",
 	"",
-	"Code/commits/PRs: write normal. \"stop caveman\" or \"normal mode\": revert. Level persist until changed or session end.",
+	"Code/commits/PRs: write normal. Full mode active for entire session."
 ].join("\n");
 
 const CAVEMAN_TURN_REMINDER = [
@@ -99,35 +97,7 @@ const COMPRESS_PROMPT = [
 ].join("\n");
 
 export default function piCavemanExtension(pi: ExtensionAPI) {
-	let enabled = true;
 	let fullPromptInjected = false;
-
-	function setEnabled(next: boolean) {
-		enabled = next;
-		if (!enabled) fullPromptInjected = false;
-	}
-
-	pi.registerCommand("pi-caveman", {
-		description: "Toggle pi-caveman full mode: on | off | status",
-		handler: async (args, ctx) => {
-			const arg = args.trim().toLowerCase();
-			if (arg === "on") {
-				setEnabled(true);
-				ctx.ui.notify("pi-caveman: on", "info");
-				return;
-			}
-			if (arg === "off" || arg === "stop" || arg === "disable") {
-				setEnabled(false);
-				ctx.ui.notify("pi-caveman: off", "info");
-				return;
-			}
-			if (arg === "status" || arg === "") {
-				ctx.ui.notify(`pi-caveman: ${enabled ? "on" : "off"}, fullPromptInjected=${fullPromptInjected}`, "info");
-				return;
-			}
-			ctx.ui.notify("Usage: /pi-caveman on|off|status", "warning");
-		},
-	});
 
 	pi.registerCommand("caveman-compress", {
 		description: "Compress natural language memory file into caveman format",
@@ -138,27 +108,6 @@ export default function piCavemanExtension(pi: ExtensionAPI) {
 				return;
 			}
 			await ctx.sendUserMessage(COMPRESS_PROMPT.replace("{FILE}", file));
-		},
-	});
-
-	// Aliases kept for muscle memory.
-	pi.registerCommand("caveman-session", {
-		description: "Alias for /pi-caveman",
-		handler: async (args, ctx) => {
-			const arg = args.trim().toLowerCase();
-			if (arg === "off" || arg === "stop" || arg === "disable") setEnabled(false);
-			else if (arg === "on" || arg === "auto" || arg === "") setEnabled(true);
-			ctx.ui.notify(`pi-caveman: ${enabled ? "on" : "off"}`, "info");
-		},
-	});
-
-	pi.registerCommand("caveman-smart", {
-		description: "Alias for /pi-caveman",
-		handler: async (args, ctx) => {
-			const arg = args.trim().toLowerCase();
-			if (arg === "off" || arg === "stop" || arg === "disable") setEnabled(false);
-			else if (arg === "on" || arg === "auto" || arg === "") setEnabled(true);
-			ctx.ui.notify(`pi-caveman: ${enabled ? "on" : "off"}`, "info");
 		},
 	});
 
@@ -174,16 +123,6 @@ export default function piCavemanExtension(pi: ExtensionAPI) {
 	});
 
 	pi.on("before_agent_start", async (event) => {
-		if (/\b(stop|disable|deactivate|turn off)\b.*\bcaveman\b/i.test(event.prompt) || /\bnormal mode\b/i.test(event.prompt)) {
-			setEnabled(false);
-			return undefined;
-		}
-		if (/\b(activate|enable|turn on|start|talk like)\b.*\bcaveman\b/i.test(event.prompt) || event.prompt.trim().toLowerCase() === "/caveman") {
-			setEnabled(true);
-		}
-
-		if (!enabled) return undefined;
-
 		const pieces: string[] = [];
 		if (!fullPromptInjected && !event.systemPrompt.includes(CAVEMAN_MARKER)) {
 			pieces.push(CAVEMAN_FULL_PROMPT);
