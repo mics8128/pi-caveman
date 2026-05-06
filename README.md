@@ -102,4 +102,6 @@ Pi auto-discovers directory extensions with `index.ts` from:
 
 ## License / Attribution
 
-Prompt wording and caveman concept adapted from [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman). See upstream project for original license and full ecosystem.
+MIT License, same as upstream [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman).
+
+Prompt wording and caveman concept adapted from upstream. See `LICENSE` for copied upstream license text.
