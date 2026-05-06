@@ -79,6 +79,16 @@ cd ~/.pi/agent/extensions/pi-caveman
 git status
 ```
 
+Prompt text lives in:
+
+```txt
+prompts/caveman-full.md
+prompts/turn-reminder.md
+prompts/compress.md
+```
+
+`index.ts` only loads prompts and wires pi events/commands.
+
 Pi auto-discovers directory extensions with `index.ts` from:
 
 ```txt
